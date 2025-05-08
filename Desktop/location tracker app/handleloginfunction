@@ -1,0 +1,40 @@
+const handleLogin = async () => {
+    const mobileRegex = /^[6-9]\d{9}$/;
+
+    if (!mobile || !password) {
+      Alert.alert("Error", "Please enter mobile number and password");
+      return;
+    }
+
+    if (!mobileRegex.test(mobile)) {
+      Alert.alert("Error", "Please enter a valid mobile number");
+      return;
+    }
+
+    try {
+      const response = await fetch("https://api.lazled.com/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mobileNumber: mobile,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.token) {
+        // Save token (you can use AsyncStorage or SecureStore)
+        console.log("Login successful:", data);
+        Alert.alert("Success", "Login successful");
+        router.replace("/(tabs)"); // Navigate to your tab layout
+      } else {
+        Alert.alert("Login Failed", data.message || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error("Login error", error);
+      Alert.alert("Error", "Something went wrong");
+    }
+  };
